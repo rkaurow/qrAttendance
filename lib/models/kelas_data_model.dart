@@ -6,11 +6,13 @@ class Kelas {
   final String iDKelas;
   final String namaDosen;
   final String uIdDosen;
+  final String statuskelas;
   Kelas({
     required this.namaKelas,
     required this.iDKelas,
     required this.namaDosen,
     required this.uIdDosen,
+    required this.statuskelas,
   });
 
   Kelas copyWith({
@@ -18,30 +20,34 @@ class Kelas {
     String? iDKelas,
     String? namaDosen,
     String? uIdDosen,
+    String? statuskelas,
   }) {
     return Kelas(
       namaKelas: namaKelas ?? this.namaKelas,
       iDKelas: iDKelas ?? this.iDKelas,
       namaDosen: namaDosen ?? this.namaDosen,
       uIdDosen: uIdDosen ?? this.uIdDosen,
+      statuskelas: statuskelas ?? this.statuskelas,
     );
   }
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'nama Kelas': namaKelas,
-      'iD Kelas': iDKelas,
-      'nama Dosen': namaDosen,
-      'uId Dosen': uIdDosen,
+      'namaKelas': namaKelas,
+      'iDKelas': iDKelas,
+      'namaDosen': namaDosen,
+      'uIdDosen': uIdDosen,
+      'statuskelas': statuskelas,
     };
   }
 
   factory Kelas.fromMap(Map<String, dynamic> map) {
     return Kelas(
-      namaKelas: map['nama Kelas'] as String,
-      iDKelas: map['iD Kelas'] as String,
-      namaDosen: map['nama Dosen'] as String,
-      uIdDosen: map['uId Dosen'] as String,
+      namaKelas: map['namaKelas'] as String,
+      iDKelas: map['iDKelas'] as String,
+      namaDosen: map['namaDosen'] as String,
+      uIdDosen: map['uIdDosen'] as String,
+      statuskelas: map['statuskelas'] as String,
     );
   }
 
@@ -52,7 +58,7 @@ class Kelas {
 
   @override
   String toString() {
-    return 'Kelas(namaKelas: $namaKelas, iDKelas: $iDKelas, namaDosen: $namaDosen, uIdDosen: $uIdDosen)';
+    return 'Kelas(namaKelas: $namaKelas, iDKelas: $iDKelas, namaDosen: $namaDosen, uIdDosen: $uIdDosen, statuskelas: $statuskelas)';
   }
 
   @override
@@ -62,7 +68,8 @@ class Kelas {
     return other.namaKelas == namaKelas &&
         other.iDKelas == iDKelas &&
         other.namaDosen == namaDosen &&
-        other.uIdDosen == uIdDosen;
+        other.uIdDosen == uIdDosen &&
+        other.statuskelas == statuskelas;
   }
 
   @override
@@ -70,6 +77,7 @@ class Kelas {
     return namaKelas.hashCode ^
         iDKelas.hashCode ^
         namaDosen.hashCode ^
-        uIdDosen.hashCode;
+        uIdDosen.hashCode ^
+        statuskelas.hashCode;
   }
 }

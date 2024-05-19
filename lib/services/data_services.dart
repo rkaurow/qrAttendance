@@ -21,6 +21,7 @@ class DataService {
 
     final String kid = _firestore.collection('Kelas').doc().id;
     await _firestore.collection('Kelas').doc(kid).set(Kelas(
+            statuskelas: 'belum',
             namaKelas: namakelas,
             iDKelas: kid,
             namaDosen: namaDosen,
@@ -137,5 +138,12 @@ class DataService {
         .collection('users')
         .doc(_auth.currentUser!.uid)
         .update({'foto profil': urldownload});
+  }
+
+  Future<void> updatestatuskelas(String uid, String status) async {
+    await _firestore
+        .collection('Kelas')
+        .doc(uid)
+        .update({'statuskelas': status});
   }
 }

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:viko_absensi/core/bloc/mahasiswa/mahasiswa_bloc.dart';
+import 'package:viko_absensi/pages/home_page.dart';
+import 'package:viko_absensi/pages/kelas/kelas_page.dart';
+import 'package:viko_absensi/services/constant/constant.dart';
 
 class TambahSiswa extends StatefulWidget {
   final String kelasId;
@@ -36,51 +39,96 @@ class _TambahSiswaState extends State<TambahSiswa> {
                   child: CircularProgressIndicator(),
                 );
               }
-              return ListView(
-                children: snapshot.data!.docs.map((doc) {
-                  Map<String, dynamic> data =
-                      doc.data()! as Map<String, dynamic>;
-                  if (data['status'] == 'mahasiswa') {
-                    return Card(
-                      child: BlocListener<MahasiswaBloc, MahasiswaState>(
-                        listener: (context, state) {
-                          state.maybeWhen(
-                              success: (dataService) {
-                                Navigator.pop(context);
+              var items = snapshot.data!.docs;
+              return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    QueryDocumentSnapshot data = items[index];
+                    return data['status'] == 'mahasiswa'
+                        ? Card(
+                            child: BlocListener<MahasiswaBloc, MahasiswaState>(
+                              listener: (context, state) {
+                                state.maybeWhen(
+                                    loading: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              color: Colors.deepPurple,
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    success: (dataService) {
+                                      Navigator.pushAndRemoveUntil(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => HomePage(),
+                                          ),
+                                          (route) => false);
+                                    },
+                                    orElse: () {});
                               },
-                              orElse: () {});
-                        },
-                        child: BlocBuilder<MahasiswaBloc, MahasiswaState>(
-                          builder: (context, state) {
-                            return state.maybeWhen(loading: () {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }, orElse: () {
-                              return ListTile(
-                                onTap: () {
-                                  context.read<MahasiswaBloc>().add(
-                                      MahasiswaEvent.tambahmahasiswa(
-                                          nama: data['nama'],
-                                          uid: data['uid'],
-                                          nim: data['nim'],
-                                          prodi: data['prodi'],
-                                          idkelas: widget.kelasId));
+                              child: BlocBuilder<MahasiswaBloc, MahasiswaState>(
+                                builder: (context, state) {
+                                  return state.maybeWhen(orElse: () {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        context.read<MahasiswaBloc>().add(
+                                              MahasiswaEvent.tambahmahasiswa(
+                                                nama: data['nama'],
+                                                uid: data['uid'],
+                                                nim: data['nim'],
+                                                prodi: data['prodi'],
+                                                idkelas: widget.kelasId,
+                                              ),
+                                            );
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 15.0),
+                                        child: Container(
+                                          height: screenHeight(context) * 0.1,
+                                          width: screenWidth(context),
+                                          decoration: BoxDecoration(
+                                            color: Colors.deepPurple,
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15.0, vertical: 10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  data['nama'],
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  data['nim'],
+                                                  style: GoogleFonts.poppins(
+                                                      color: Colors.white,
+                                                      fontSize: 10),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  });
                                 },
-                                subtitle: Text(data['prodi']),
-                                title: Text(
-                                  data['nama'],
-                                ),
-                              );
-                            });
-                          },
-                        ),
-                      ),
-                    );
-                  }
-                  return const Center();
-                }).toList(),
-              );
+                              ),
+                            ),
+                          )
+                        : Center();
+                  });
             }));
   }
 }
